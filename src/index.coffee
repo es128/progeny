@@ -20,7 +20,7 @@ defaultSettings = (extname) ->
       extensionsList: ['scss', 'sass']
 
 module.exports =
-({rootPath, extension, regexp, prefix, exclusion, extensionsList}) ->
+({rootPath, extension, regexp, prefix, exclusion, extensionsList}={}) ->
   parseDeps = (data, path, depsList, callback) ->
     parent = sysPath.dirname path
     deps = data

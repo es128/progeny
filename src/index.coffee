@@ -14,7 +14,7 @@ defaultSettings = (extname) ->
     when 'less'
       regexp: /^\s*@import\s+['"]([^'"]+)['"]/
     when 'scss', 'sass'
-      regexp: /^\s*@import\s+['"]([^'"]+)['"]/
+      regexp: /^\s*@import\s+['"]?([^'"]+)['"]?/
       prefix: '_'
       exclusion: /^compass/
       extensionsList: ['scss', 'sass']

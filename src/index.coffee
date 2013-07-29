@@ -40,7 +40,7 @@ module.exports =
           else false
       .map (path) ->
         if ".#{extension}" isnt sysPath.extname path
-          path + ".#{extension}"
+          "#{path}.#{extension}"
         else
           path
       .map (path) ->

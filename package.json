@@ -1,0 +1,25 @@
+{
+  "name": "progeny",
+  "version": "0.1.0",
+  "description": "Recursively finds dependencies of style and template source files",
+  "author": {
+    "name": "Elan Shanker",
+    "url": "http://github.com/es128"
+  },
+  "homepage": "https://github.com/es128/progeny",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:es128/progeny.git"
+  },
+  "bugs": {
+    "url": "https://github.com/es128/progeny/issues"
+  },
+  "main": "./lib/index",
+  "scripts": {
+    "prepublish": "rm -rf lib && coffee --bare --output lib/ src/"
+  },
+  "dependencies": {
+    "async-each": "~0.1.3"
+  },
+  "devDependencies": {}
+}

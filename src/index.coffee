@@ -24,6 +24,7 @@ module.exports =
   parseDeps = (data, path, depsList, callback) ->
     parent = sysPath.dirname path
     deps = data
+      .toString()
       .split('\n')
       .map (line) ->
         line.match regexp

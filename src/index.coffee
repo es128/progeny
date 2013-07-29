@@ -44,7 +44,7 @@ module.exports =
         else
           path
       .map (path) ->
-        if path.charAt(0) is '/'
+        if path[0] is '/'
           sysPath.join rootPath, path[1..]
         else
           sysPath.join parent, path
@@ -54,7 +54,7 @@ module.exports =
       deps.forEach (path) ->
         dir = sysPath.dirname path
         file = sysPath.basename path
-        if prefix? and 0 isnt file.indexOf prefix
+        if 0 isnt file.indexOf prefix
           prefixed.push sysPath.join dir, "#{prefix}#{file}"
       deps = deps.concat prefixed
 
@@ -84,7 +84,7 @@ module.exports =
   (data, path, callback) ->
     depsList = []
 
-    extname = sysPath.extname(path).slice 1
+    extname = sysPath.extname(path)[1..]
     def = defaultSettings extname
     extension ?= extname
     regexp ?= def.regexp

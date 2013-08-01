@@ -40,7 +40,7 @@ var progenyConfig = {
     // Array of multiple file extensions to try when looking for dependencies
     extensionsList: ['scss', 'sass'],
 
-    // Regexp to use for parsing the dependency references
+    // Regexp to run on each line of source code to match dependency references
     // Make sure you wrap the file name part in (parentheses)
     regexp: /^\s*@import\s+['"]?([^'"]+)['"]?/,
 

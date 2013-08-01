@@ -22,7 +22,7 @@ defaultSettings = (extname) ->
 module.exports =
 ({rootPath, extension, regexp, prefix, exclusion, extensionsList}={}) ->
   parseDeps = (data, path, depsList, callback) ->
-    parent = sysPath.dirname path
+    parent = sysPath.dirname path if path
     deps = data
       .toString()
       .split('\n')
@@ -40,12 +40,12 @@ module.exports =
             exclusion is path
           else false
       .map (path) ->
-        if ".#{extension}" isnt sysPath.extname path
+        if extension and ".#{extension}" isnt sysPath.extname path
           "#{path}.#{extension}"
         else
           path
       .map (path) ->
-        if path[0] is '/'
+        if path[0] is '/' or not parent
           sysPath.join rootPath, path[1..]
         else
           sysPath.join parent, path
@@ -85,9 +85,8 @@ module.exports =
   (data, path, callback) ->
     depsList = []
 
-    extname = sysPath.extname(path)[1..]
-    def = defaultSettings extname
-    extension ?= extname
+    extension ?= sysPath.extname(path)[1..]
+    def = defaultSettings extension
     regexp ?= def.regexp
     prefix ?= def.prefix
     exclusion ?= def.exclusion

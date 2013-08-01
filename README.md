@@ -79,6 +79,18 @@ var getCustomDependencies = progeny({
 });
 ```
 
+Process source code from a string without its file path:
+
+```javascript
+var mySourceString; // assume this contains valid source code
+progeny({
+    // extension and rootPath must be specified for this to work
+    // also need regexp if extension not one of the predefined ones
+    extension: 'jade',
+    rootPath: path.join('path', 'to', 'project')
+})(mySourceString, null, function (err, deps) {});
+```
+
 
 License
 -------

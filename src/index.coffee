@@ -33,11 +33,13 @@ module.exports =
       .map (match) ->
         match[1]
       .filter (path) ->
-        !!path and not switch
-          when exclusion instanceof RegExp
-            exclusion.test path
-          when exclusion instanceof String
-            exclusion is path
+        unless Object::toString.call(exclusion) is '[object Array]'
+          exclusion = [exclusion]
+        !!path and not exclusion.some (_exclusion) -> switch
+          when _exclusion instanceof RegExp
+            _exclusion.test path
+          when Object::toString.call(_exclusion) is '[object String]'
+            _exclusion is path
           else false
       .map (path) ->
         if extension and ".#{extension}" isnt sysPath.extname path

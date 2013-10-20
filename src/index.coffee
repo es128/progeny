@@ -33,12 +33,11 @@ module.exports =
       .map (match) ->
         match[1]
       .filter (path) ->
-        unless Object::toString.call(exclusion) is '[object Array]'
-          exclusion = [exclusion]
+        exclusion = [exclusion] if '[object Array]' isnt toString.call exclusion
         !!path and not exclusion.some (_exclusion) -> switch
           when _exclusion instanceof RegExp
             _exclusion.test path
-          when Object::toString.call(_exclusion) is '[object String]'
+          when '[object String]' is toString.call _exclusion
             _exclusion is path
           else false
       .map (path) ->

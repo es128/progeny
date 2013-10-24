@@ -47,7 +47,7 @@ var progenyConfig = {
     // File prefix to try (in addition to the raw value matched in the regexp)
     prefix: '_',
 
-    // Matched stuff to exclude, string or regex
+    // Matched stuff to exclude: string, regex, or array of either/both
     exclusion: /^compass/,
 
     // In case a match starts with a slash, the absolute path to apply

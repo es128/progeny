@@ -41,7 +41,7 @@ module.exports =
             _exclusion is path
           else false
       .map (path) ->
-        if extension and ".#{extension}" isnt sysPath.extname path
+        if extension and '' is sysPath.extname path
           "#{path}.#{extension}"
         else
           path
@@ -50,6 +50,11 @@ module.exports =
           sysPath.join rootPath, path[1..]
         else
           sysPath.join parent, path
+
+    if extension
+      deps.forEach (path) ->
+        if ".#{extension}" isnt sysPath.extname path
+          deps.push "#{path}.#{extension}"
 
     if prefix?
       prefixed = []

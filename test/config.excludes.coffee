@@ -5,9 +5,16 @@ assert = require 'assert'
 getFixturePath = (subPath) ->
   path.join __dirname, 'fixtures', subPath
 
+describe 'progeny', ->
+  it 'should preserve original file extensions', (done) ->
+    progeny() null, getFixturePath('altExtensions.jade'), (err, dependencies) ->
+      paths = (getFixturePath x for x in ['htmlPartial.html', 'htmlPartial.html.jade'])
+      assert.deepEqual dependencies, paths
+      do done
+
 describe 'progeny configuration', ->
   describe 'excluded file list', ->
-    progenyConfig = 
+    progenyConfig =
       rootPath: path.join __dirname, 'fixtures'
       exclusion: [
         /excludedDependencyOne/

@@ -9,12 +9,12 @@ defaultSettings = (extname) ->
     when 'jade'
       regexp: /^\s*(?:include|extends)\s+(.+)/
     when 'styl'
-      regexp: /^\s*@import\s+['"]?([^'"]+)['"]?/
+      regexp: /^\s*(?:@import|@require)\s+['"](.+?)['"](?:$|;)/
       exclusion: 'nib'
     when 'less'
       regexp: /^\s*@import\s+['"]([^'"]+)['"]/
     when 'scss', 'sass'
-      regexp: /^\s*@import\s+['"]?([^'"]+)['"]?/
+      regexp: /^\s*@import\s+['"]?([^"']+)['"]?(?:;|$)/
       prefix: '_'
       exclusion: /^compass/
       extensionsList: ['scss', 'sass']

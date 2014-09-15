@@ -36,9 +36,9 @@ module.exports =
 					.reduce (flat, val) -> flat.concat val
 					, []
 			, [data]
-			.map (val) -> (val.match multipass[multipass.length-1])[0]
+			.map (val) -> (val.match multipass[multipass.length-1])[1]
 
-		deps = (mdeps or []).concat data
+		deps = data
 			.toString()
 			.split('\n')
 			.map (line) ->
@@ -47,6 +47,7 @@ module.exports =
 				match?.length > 0
 			.map (match) ->
 				match[1]
+			.concat mdeps or []
 			.filter (path) ->
 				exclusion = [exclusion] if '[object Array]' isnt toString.call exclusion
 				!!path and not exclusion.some (_exclusion) -> switch
@@ -112,6 +113,7 @@ module.exports =
 		prefix ?= def.prefix
 		exclusion ?= def.exclusion
 		extensionsList ?= def.extensionsList or []
+		multipass ?= def.multipass
 
 		run = ->
 			parseDeps data, path, depsList, ->

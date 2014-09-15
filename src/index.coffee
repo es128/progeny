@@ -18,12 +18,27 @@ defaultSettings = (extname) ->
       prefix: '_'
       exclusion: /^compass/
       extensionsList: ['scss', 'sass']
+      multipass: [
+        /@import[^;]+;/g
+        /\s*['"][^'"]+['"]\s*,?/g
+        /(?:['"])([^'"]+)/
+      ]
 
 module.exports =
-({rootPath, extension, regexp, prefix, exclusion, extensionsList}={}) ->
+({rootPath, extension, regexp, prefix, exclusion, extensionsList, multipass}={}) ->
   parseDeps = (data, path, depsList, callback) ->
     parent = sysPath.dirname path if path
-    deps = data
+
+    mdeps = multipass?[..-2]
+      .reduce (vals, regex) ->
+        vals
+          .map (val) -> val.match regex
+          .reduce (flat, val) -> flat.concat val
+          , []
+      , [data]
+      .map (val) -> (val.match multipass[multipass.length-1])[0]
+
+    deps = (mdeps or []).concat data
       .toString()
       .split('\n')
       .map (line) ->

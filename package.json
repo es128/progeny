@@ -14,7 +14,7 @@
   "bugs": {
     "url": "https://github.com/es128/progeny/issues"
   },
-  "main": "./lib/index",
+  "main": "lib",
   "scripts": {
     "prepublish": "rm -rf lib && coffee --bare --output lib/ src/",
     "test": "mocha --compilers coffee:coffee-script"

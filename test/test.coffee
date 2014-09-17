@@ -12,6 +12,13 @@ describe 'progeny', ->
 			assert.deepEqual dependencies, paths
 			do done
 
+	it 'should resolve multiline @import statements', (done) ->
+		progeny() null, getFixturePath('multilineImport.scss'), (err, dependencies) ->
+			# 6 non-excluded references in fixture
+			# x4 for prefixed/unprefixed and both file extensions
+			assert.equal dependencies.length, 24
+			do done
+
 describe 'progeny configuration', ->
 	describe 'excluded file list', ->
 		progenyConfig =

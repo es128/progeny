@@ -12,7 +12,7 @@ defaultSettings = (extname) ->
 			regexp: /^\s*(?:@import|@require)\s+['"]?([^'"]+)['"]?/
 			exclusion: 'nib'
 		when 'less'
-			regexp: /^\s*@import\s+['"]([^'"]+)['"]/
+			regexp: /^\s*@import\s+(?:\(\w+\)\s*)?['"]([^'"]+)['"]/
 		when 'scss', 'sass'
 			regexp: /^\s*@import\s+['"]?([^'"]+)['"]?/
 			prefix: '_'

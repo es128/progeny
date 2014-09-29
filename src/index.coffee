@@ -1,7 +1,7 @@
 'use strict'
 
 sysPath = require 'path'
-fs = require 'fs'
+fs = require 'fs-mode'
 each = require 'async-each'
 
 defaultSettings = (extname) ->
@@ -24,8 +24,8 @@ defaultSettings = (extname) ->
 				/(?:['"])([^'"]+)/
 			]
 
-module.exports =
-({rootPath, extension, regexp, prefix, exclusion, extensionsList, multipass}={}) ->
+progenyConstructor =
+(mode, {rootPath, extension, regexp, prefix, exclusion, extensionsList, multipass}={}) ->
 	parseDeps = (data, path, depsList, callback) ->
 		parent = sysPath.dirname path if path
 
@@ -97,14 +97,14 @@ module.exports =
 					callback()
 				else
 					depsList.push path
-					fs.readFile path, encoding: 'utf8', (err, data) ->
+					fs[mode].readFile path, encoding: 'utf8', (err, data) ->
 						return callback() if err
 						parseDeps data, path, depsList, callback
 			, callback
 		else
 			callback()
 
-	(data, path, callback) ->
+	progeny = (data, path, callback) ->
 		depsList = []
 
 		extension ?= sysPath.extname(path)[1..]
@@ -121,8 +121,20 @@ module.exports =
 		if data?
 			do run
 		else
-			fs.readFile path, encoding: 'utf8', (err, fileContents) ->
+			fs[mode].readFile path, encoding: 'utf8', (err, fileContents) ->
 				return callback err if err
 				data = fileContents
 				do run
+
+	progenySync = (data, path) ->
+		result = []
+		progeny data, path, (err, depsList) ->
+			throw err if err
+			result = depsList
+		result
+
+	if mode is 'Sync' then progenySync else progeny
+
+module.exports = progenyConstructor.bind null, 'Async'
+module.exports.Sync = progenyConstructor.bind null, 'Sync'
 

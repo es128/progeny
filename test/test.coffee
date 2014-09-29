@@ -19,6 +19,18 @@ describe 'progeny', ->
 			assert.equal dependencies.length, 24
 			do done
 
+	it 'should be truly async', (done) ->
+		dependencies = null
+		progeny() null, getFixturePath('altExtensions.jade'), (err, deps) ->
+			dependencies = deps
+			assert Array.isArray dependencies
+			do done
+		assert.equal dependencies, null
+
+describe 'progeny.Sync', ->
+	it 'should return the result', ->
+		assert Array.isArray progeny.Sync() null, getFixturePath('altExtensions.jade')
+
 describe 'progeny configuration', ->
 	describe 'excluded file list', ->
 		progenyConfig =

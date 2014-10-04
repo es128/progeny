@@ -7,11 +7,10 @@ Or configure it to do the same kind of thing with any other type of text file.
 
 Usage
 -----
-#### require('progeny')([options])(path, [sourceContents], callback)
-#### require('progeny').Sync([options])(path, [sourceContents])
+#### require('progeny')([config])(path, [sourceContents], callback)
+#### require('progeny').Sync([config])(path, [sourceContents])
 Call **progeny** with an optional configuration object, it returns a reusable
-function. There are built-in configurations already for `jade`, `stylus`,
-`less`, and `sass`. Call that function with a path to a source file (and its
+function. Call that function with a path to a source file (and its
 source code if you already have it handy), and it will figure out all of that
 file's dependencies and sub-dependencies, passing an array of them to your
 callback. Or use the `Sync` API to get the results as a return value.
@@ -36,7 +35,12 @@ require('progeny')()(filePath, function (err, dependencies) {
 var dependencies = require('progeny')()(filePath);
 ```
 
-##### Optional Configuration Attributes
+##### Configuration
+There are
+[built-in configurations](https://github.com/es128/progeny/blob/master/src/index.coffee#L7-L25)
+already for `jade`, `stylus`, `less`, and `sass`/`scss`. Configuration must be
+specified for any other formats. Feel free to submit Pull Requests to add
+default types, or improve the settings for the exisiting ones.
 
 ```javascript
 var progenyConfig = {

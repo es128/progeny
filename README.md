@@ -7,6 +7,7 @@ Or configure it to do the same kind of thing with any other type of text file.
 
 Usage
 -----
+#### require('progeny')([options])(path, [sourceContents], callback)
 Call **Progeny** with an optional configuration object, it returns a reusable
 function. There are built-in configurations already for `jade`, `stylus`,
 `less`, and `sass`. Call that function with a path to a source file (and its
@@ -24,7 +25,7 @@ the source from the file itself and apply a built-in configuration based on the 
 
 ```javascript
 var filePath = path.join('path', 'to', 'project', 'style-or-template.jade');
-require('progeny')()(null, filePath, function (err, dependencies) {
+require('progeny')()(filePath, function (err, dependencies) {
     // use the dependencies array in here
 });
 ```
@@ -62,7 +63,7 @@ Process a list of files:
 var progeny = require('progeny');
 var getDependencies = progeny(progenyConfig);
 myFiles.forEach( function (file) {
-    getDependencies(file.source, file.path, function (err, deps) {
+    getDependencies(file.path, file.source, function (err, deps) {
         if (err) throw new Error(err);
         file.dependencies = deps;
     });
@@ -88,7 +89,7 @@ progeny({
     // also need regexp if extension not one of the predefined ones
     extension: 'jade',
     rootPath: path.join('path', 'to', 'project')
-})(mySourceString, null, function (err, deps) {});
+})(null, mySourceString, function (err, deps) {});
 ```
 
 

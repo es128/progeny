@@ -58,7 +58,16 @@ var progenyConfig = {
     exclusion: /^compass/,
 
     // In case a match starts with a slash, the absolute path to apply
-    rootPath: path.join('path', 'to', 'project')
+    rootPath: path.join('path', 'to', 'project'),
+
+    // An array of regexps to run in series for more complex dependency parsing
+    // Useful for matching multiple dependencies from one, possibly mult-line,
+    // statement. All regexps except the last one must use the global flag.
+    multipass: [
+        /@import[^;]+;/g,
+        /\s*['"][^'"]+['"]\s*,?/g,
+        /(?:['"])([^'"]+)/
+    ]
 };
 ```
 

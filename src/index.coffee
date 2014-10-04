@@ -24,8 +24,16 @@ defaultSettings = (extname) ->
 				/(?:['"])([^'"]+)/
 			]
 
-progenyConstructor =
-(mode, {rootPath, extension, regexp, prefix, exclusion, extensionsList, multipass}={}) ->
+progenyConstructor = (mode, settings = {}) ->
+	{
+		rootPath
+		extension
+		regexp
+		prefix
+		exclusion
+		extensionsList
+		multipass
+	} = settings
 	parseDeps = (data, path, depsList, callback) ->
 		parent = sysPath.dirname path if path
 
@@ -49,7 +57,8 @@ progenyConstructor =
 				match[1]
 			.concat mdeps or []
 			.filter (path) ->
-				exclusion = [exclusion] if '[object Array]' isnt toString.call exclusion
+				if '[object Array]' isnt toString.call exclusion
+					exclusion = [exclusion]
 				!!path and not exclusion.some (_exclusion) -> switch
 					when _exclusion instanceof RegExp
 						_exclusion.test path

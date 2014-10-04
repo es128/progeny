@@ -111,6 +111,9 @@ progeny({
 })(null, mySourceString, function (err, deps) {});
 ```
 
+Change Log
+---------
+[See release notes page on GitHub](https://github.com/es128/progeny/releases)
 
 License
 -------

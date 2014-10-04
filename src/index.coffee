@@ -34,7 +34,7 @@ progenyConstructor = (mode, settings = {}) ->
 		extensionsList
 		multipass
 	} = settings
-	parseDeps = (data, path, depsList, callback) ->
+	parseDeps = (path, data, depsList, callback) ->
 		parent = sysPath.dirname path if path
 
 		mdeps = multipass?[..-2]
@@ -108,12 +108,16 @@ progenyConstructor = (mode, settings = {}) ->
 					depsList.push path
 					fs[mode].readFile path, encoding: 'utf8', (err, data) ->
 						return callback() if err
-						parseDeps data, path, depsList, callback
+						parseDeps path, data, depsList, callback
 			, callback
 		else
 			callback()
 
-	progeny = (data, path, callback) ->
+	progeny = (path, data, callback) ->
+		if typeof data is 'function'
+			callback = data
+			data = undefined
+
 		depsList = []
 
 		extension ?= sysPath.extname(path)[1..]
@@ -125,7 +129,7 @@ progenyConstructor = (mode, settings = {}) ->
 		multipass ?= def.multipass
 
 		run = ->
-			parseDeps data, path, depsList, ->
+			parseDeps path, data, depsList, ->
 				callback null, depsList
 		if data?
 			do run
@@ -135,9 +139,9 @@ progenyConstructor = (mode, settings = {}) ->
 				data = fileContents
 				do run
 
-	progenySync = (data, path) ->
+	progenySync = (path, data) ->
 		result = []
-		progeny data, path, (err, depsList) ->
+		progeny path, data, (err, depsList) ->
 			throw err if err
 			result = depsList
 		result

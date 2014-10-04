@@ -7,13 +7,13 @@ getFixturePath = (subPath) ->
 
 describe 'progeny', ->
 	it 'should preserve original file extensions', (done) ->
-		progeny() null, getFixturePath('altExtensions.jade'), (err, dependencies) ->
+		progeny() getFixturePath('altExtensions.jade'), (err, dependencies) ->
 			paths = (getFixturePath x for x in ['htmlPartial.html', 'htmlPartial.html.jade'])
 			assert.deepEqual dependencies, paths
 			do done
 
 	it 'should resolve multiline @import statements', (done) ->
-		progeny() null, getFixturePath('multilineImport.scss'), (err, dependencies) ->
+		progeny() getFixturePath('multilineImport.scss'), (err, dependencies) ->
 			# 6 non-excluded references in fixture
 			# x4 for prefixed/unprefixed and both file extensions
 			assert.equal dependencies.length, 24
@@ -21,7 +21,7 @@ describe 'progeny', ->
 
 	it 'should be truly async', (done) ->
 		dependencies = null
-		progeny() null, getFixturePath('altExtensions.jade'), (err, deps) ->
+		progeny() getFixturePath('altExtensions.jade'), (err, deps) ->
 			dependencies = deps
 			assert Array.isArray dependencies
 			do done
@@ -29,7 +29,7 @@ describe 'progeny', ->
 
 describe 'progeny.Sync', ->
 	it 'should return the result', ->
-		assert Array.isArray progeny.Sync() null, getFixturePath('altExtensions.jade')
+		assert Array.isArray progeny.Sync() getFixturePath('altExtensions.jade')
 
 describe 'progeny configuration', ->
 	describe 'excluded file list', ->
@@ -45,7 +45,7 @@ describe 'progeny configuration', ->
 			progenyConfig.exclusion = /excludedDependencyOne/
 			getDependencies = progeny progenyConfig
 
-			getDependencies null, getFixturePath('excludedDependencies.jade'), (err, dependencies) ->
+			getDependencies getFixturePath('excludedDependencies.jade'), (err, dependencies) ->
 				paths =  (getFixturePath x for x in ['excludedDependencyTwo.jade', 'includedDependencyOne.jade'])
 				assert.deepEqual dependencies, paths
 				do done
@@ -54,7 +54,7 @@ describe 'progeny configuration', ->
 			progenyConfig.exclusion = 'excludedDependencyOne'
 			getDependencies = progeny progenyConfig
 
-			getDependencies null, getFixturePath('excludedDependencies.jade'), (err, dependencies) ->
+			getDependencies getFixturePath('excludedDependencies.jade'), (err, dependencies) ->
 				paths =  (getFixturePath x for x in ['excludedDependencyTwo.jade', 'includedDependencyOne.jade'])
 				assert.deepEqual dependencies, paths
 				do done
@@ -66,7 +66,7 @@ describe 'progeny configuration', ->
 			]
 			getDependencies = progeny progenyConfig
 
-			getDependencies null, getFixturePath('excludedDependencies.jade'), (err, dependencies) ->
+			getDependencies getFixturePath('excludedDependencies.jade'), (err, dependencies) ->
 				assert.deepEqual dependencies, [getFixturePath 'includedDependencyOne.jade']
 				do done
 
@@ -77,7 +77,7 @@ describe 'progeny configuration', ->
 			]
 			getDependencies = progeny progenyConfig
 
-			getDependencies null, getFixturePath('excludedDependencies.jade'), (err, dependencies) ->
+			getDependencies getFixturePath('excludedDependencies.jade'), (err, dependencies) ->
 				assert.deepEqual dependencies, [getFixturePath 'includedDependencyOne.jade']
 				do done
 
@@ -88,6 +88,6 @@ describe 'progeny configuration', ->
 			]
 			getDependencies = progeny progenyConfig
 
-			getDependencies null, getFixturePath('excludedDependencies.jade'), (err, dependencies) ->
+			getDependencies getFixturePath('excludedDependencies.jade'), (err, dependencies) ->
 				assert.deepEqual dependencies, [getFixturePath 'includedDependencyOne.jade']
 				do done

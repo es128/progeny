@@ -8,12 +8,13 @@ Or configure it to do the same kind of thing with any other type of text file.
 Usage
 -----
 #### require('progeny')([options])(path, [sourceContents], callback)
-Call **Progeny** with an optional configuration object, it returns a reusable
+#### require('progeny').Sync([options])(path, [sourceContents])
+Call **progeny** with an optional configuration object, it returns a reusable
 function. There are built-in configurations already for `jade`, `stylus`,
 `less`, and `sass`. Call that function with a path to a source file (and its
 source code if you already have it handy), and it will figure out all of that
 file's dependencies and sub-dependencies, passing an array of them to your
-callback.
+callback. Or use the `Sync` API to get the results as a return value.
 
 Examples using `path` assume you already have `var path = require('path');`.
 You _could_ just use strings like `'/path/to/project'`, but you may run into
@@ -25,9 +26,14 @@ the source from the file itself and apply a built-in configuration based on the 
 
 ```javascript
 var filePath = path.join('path', 'to', 'project', 'style-or-template.jade');
+
+// Async
 require('progeny')()(filePath, function (err, dependencies) {
     // use the dependencies array in here
 });
+
+// Sync
+var dependencies = require('progeny')()(filePath);
 ```
 
 ##### Optional Configuration Attributes

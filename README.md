@@ -8,8 +8,8 @@ that has an `import`-type syntax.
 
 Usage
 -----
-#### require('progeny')([config])(path, [sourceContents], callback)
-#### require('progeny').Sync([config])(path, [sourceContents])
+#### progeny ([config]) (path, [sourceContents], callback)
+#### progeny.Sync ([config]) (path, [sourceContents])
 Call **progeny** with an optional configuration object, it returns a reusable
 function. Call that function with a path to a source file (and its
 source code if you already have it handy), and it will figure out all of that
@@ -25,15 +25,16 @@ You can skip the config object and the source code, letting **Progeny** read
 the source from the file itself and apply a built-in configuration based on the file extension.
 
 ```javascript
+var progeny = require('progeny');
 var filePath = path.join('path', 'to', 'project', 'style-or-template.jade');
 
 // Async
-require('progeny')()(filePath, function (err, dependencies) {
+progeny()(filePath, function (err, dependencies) {
     // use the dependencies array in here
 });
 
 // Sync
-var dependencies = require('progeny')()(filePath);
+var dependencies = progeny()(filePath);
 ```
 
 ##### Configuration

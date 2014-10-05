@@ -2,7 +2,8 @@ Progeny
 =======
 Recursively finds dependencies of style and template source files.
 
-Or configure it to do the same kind of thing with any other type of text file.
+Or configure it to do the same kind of thing with any other type of code file
+that has an `import`-type syntax.
 
 
 Usage
@@ -112,7 +113,7 @@ progeny({
 ```
 
 Change Log
----------
+----------
 [See release notes page on GitHub](https://github.com/es128/progeny/releases)
 
 License

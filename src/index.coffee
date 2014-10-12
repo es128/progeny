@@ -40,11 +40,11 @@ progenyConstructor = (mode, settings = {}) ->
 		mdeps = multipass?[..-2]
 			.reduce (vals, regex) ->
 				vals
-					.map (val) -> val.match regex
+					?.map (val) -> val.match regex
 					.reduce (flat, val) -> flat.concat val
 					, []
 			, [source]
-			.map (val) -> (val.match multipass[multipass.length-1])[1]
+			?.map (val) -> (val.match multipass[multipass.length-1])[1]
 
 		deps = source
 			.toString()

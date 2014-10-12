@@ -27,6 +27,11 @@ describe 'progeny', ->
 			do done
 		assert.equal dependencies, null
 
+	it 'should return empty array when there are no deps', (done) ->
+		progeny() 'foo.scss', '$a: 5px; .test {\n  border-radius: $a; }\n', (err, deps) ->
+			assert.deepEqual deps, []
+			do done
+
 describe 'progeny.Sync', ->
 	it 'should return the result', ->
 		assert Array.isArray progeny.Sync() getFixturePath('altExtensions.jade')

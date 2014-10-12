@@ -1,6 +1,6 @@
 {
   "name": "progeny",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Recursively finds dependencies of style and template source files",
   "author": {
     "name": "Elan Shanker",

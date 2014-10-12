@@ -32,6 +32,11 @@ describe 'progeny', ->
 			assert.deepEqual deps, []
 			do done
 
+	it 'should auto-correct reversed args', (done) ->
+		progeny() '@require bar\na=5px\n.test\n\tborder-radius a', 'foo.styl', (err, deps) ->
+			assert.deepEqual deps, ['bar.styl']
+			do done
+
 describe 'progeny.Sync', ->
 	it 'should return the result', ->
 		assert Array.isArray progeny.Sync() getFixturePath('altExtensions.jade')

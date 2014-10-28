@@ -23,6 +23,8 @@ defaultSettings = (extname) ->
 				/\s*['"][^'"]+['"]\s*,?/g
 				/(?:['"])([^'"]+)/
 			]
+		when 'css'
+			regexp: /^\s*@import\s*(?:url\()?['"]([^'"]+)['"]/
 
 progenyConstructor = (mode, settings = {}) ->
 	{

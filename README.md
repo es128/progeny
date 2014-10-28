@@ -66,6 +66,9 @@ var progenyConfig = {
     // In case a match starts with a slash, the absolute path to apply
     rootPath: path.join('path', 'to', 'project'),
 
+    // Other paths to check for possible dependency resolution
+    altPaths: [path.join('path', 'to', 'shared'), path.join('path', 'to', 'common')]
+
     // An array of regexps to run in series for more complex dependency parsing
     // Useful for matching multiple dependencies from one, possibly mult-line,
     // statement. All regexps except the last one must use the global flag.

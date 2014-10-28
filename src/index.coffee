@@ -29,6 +29,7 @@ defaultSettings = (extname) ->
 progenyConstructor = (mode, settings = {}) ->
 	{
 		rootPath
+		altPaths
 		extension
 		regexp
 		prefix
@@ -48,7 +49,7 @@ progenyConstructor = (mode, settings = {}) ->
 			, [source]
 			?.map (val) -> (val.match multipass[multipass.length-1])[1]
 
-		deps = source
+		paths = source
 			.toString()
 			.split('\n')
 			.map (line) ->
@@ -72,11 +73,16 @@ progenyConstructor = (mode, settings = {}) ->
 					"#{path}.#{extension}"
 				else
 					path
-			.map (path) ->
-				if path[0] is '/' or not parent
-					sysPath.join rootPath, path
-				else
-					sysPath.join parent, path
+
+		dirs = []
+		dirs.push parent if parent
+		dirs.push rootPath if rootPath and rootPath isnt parent
+		dirs.push.apply dirs, altPaths if Array.isArray altPaths
+
+		deps = []
+		dirs.forEach (dir) ->
+			paths.forEach (path) ->
+				deps.push sysPath.join dir, path
 
 		if extension
 			deps.forEach (path) ->

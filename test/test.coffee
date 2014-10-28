@@ -101,3 +101,13 @@ describe 'progeny configuration', ->
 			getDependencies getFixturePath('excludedDependencies.jade'), (err, dependencies) ->
 				assert.deepEqual dependencies, [getFixturePath 'includedDependencyOne.jade']
 				do done
+
+	describe 'altPaths', ->
+		it 'should look for deps in altPaths', (done) ->
+			progenyConfig = altPaths: [getFixturePath 'subdir']
+			progeny(progenyConfig) getFixturePath('altExtensions.jade'), (err, dependencies) ->
+				paths = []
+				paths.push getFixturePath y + x for y in ['', 'subdir/'] for x in ['htmlPartial.html', 'htmlPartial.html.jade']
+				assert.deepEqual dependencies, paths
+				do done
+

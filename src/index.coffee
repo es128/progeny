@@ -74,7 +74,7 @@ progenyConstructor = (mode, settings = {}) ->
 					path
 			.map (path) ->
 				if path[0] is '/' or not parent
-					sysPath.join rootPath, path[1..]
+					sysPath.join rootPath, path
 				else
 					sysPath.join parent, path
 

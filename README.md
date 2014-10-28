@@ -77,6 +77,11 @@ var progenyConfig = {
         /\s*['"][^'"]+['"]\s*,?/g,
         /(?:['"])([^'"]+)/
     ]
+
+    // By default the list of paths progeny provides will be limited to files
+    // actually found in the file system. Use this option to get every possible
+    // path progeny thinks a depencency could be located at.
+    potentialDeps: true
 };
 ```
 

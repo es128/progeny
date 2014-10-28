@@ -36,6 +36,7 @@ progenyConstructor = (mode, settings = {}) ->
 		exclusion
 		extensionsList
 		multipass
+		potentialDeps
 	} = settings
 	parseDeps = (path, source, depsList, callback) ->
 		parent = sysPath.dirname path if path
@@ -113,9 +114,10 @@ progenyConstructor = (mode, settings = {}) ->
 				if path in depsList
 					callback()
 				else
-					depsList.push path
+					depsList.push path if potentialDeps
 					fs[mode].readFile path, encoding: 'utf8', (err, source) ->
 						return callback() if err
+						depsList.push path unless potentialDeps
 						parseDeps path, source, depsList, callback
 			, callback
 		else

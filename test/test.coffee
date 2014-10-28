@@ -6,14 +6,29 @@ getFixturePath = (subPath) ->
 	path.join __dirname, 'fixtures', subPath
 
 describe 'progeny', ->
+	o = potentialDeps: true
+
 	it 'should preserve original file extensions', (done) ->
-		progeny() getFixturePath('altExtensions.jade'), (err, dependencies) ->
+		progeny(o) getFixturePath('altExtensions.jade'), (err, dependencies) ->
 			paths = (getFixturePath x for x in ['htmlPartial.html', 'htmlPartial.html.jade'])
 			assert.deepEqual dependencies, paths
 			do done
 
+	it 'should resolve recursive dependencies', (done) ->
+		progeny(o) getFixturePath('recursive.jade'), (err, dependencies) ->
+			paths = [getFixturePath('altExtensions.jade')]
+				.concat(getFixturePath x for x in ['htmlPartial.html', 'htmlPartial.html.jade'])
+			assert.deepEqual dependencies, paths
+			do done
+
+	it 'should provide only real files by default', (done) ->
+		progeny() getFixturePath('recursive.jade'), (err, dependencies) ->
+			paths = [getFixturePath('altExtensions.jade')]
+			assert.deepEqual dependencies, paths
+			do done
+
 	it 'should resolve multiline @import statements', (done) ->
-		progeny() getFixturePath('multilineImport.scss'), (err, dependencies) ->
+		progeny(o) getFixturePath('multilineImport.scss'), (err, dependencies) ->
 			# 6 non-excluded references in fixture
 			# x4 for prefixed/unprefixed and both file extensions
 			assert.equal dependencies.length, 24
@@ -21,19 +36,19 @@ describe 'progeny', ->
 
 	it 'should be truly async', (done) ->
 		dependencies = null
-		progeny() getFixturePath('altExtensions.jade'), (err, deps) ->
+		progeny(o) getFixturePath('altExtensions.jade'), (err, deps) ->
 			dependencies = deps
 			assert Array.isArray dependencies
 			do done
 		assert.equal dependencies, null
 
 	it 'should return empty array when there are no deps', (done) ->
-		progeny() 'foo.scss', '$a: 5px; .test {\n  border-radius: $a; }\n', (err, deps) ->
+		progeny(o) 'foo.scss', '$a: 5px; .test {\n  border-radius: $a; }\n', (err, deps) ->
 			assert.deepEqual deps, []
 			do done
 
 	it 'should auto-correct reversed args', (done) ->
-		progeny() '@require bar\na=5px\n.test\n\tborder-radius a', 'foo.styl', (err, deps) ->
+		progeny(o) '@require bar\na=5px\n.test\n\tborder-radius a', 'foo.styl', (err, deps) ->
 			assert.deepEqual deps, ['bar.styl']
 			do done
 
@@ -50,6 +65,7 @@ describe 'progeny configuration', ->
 				/excludedDependencyTwo/
 			]
 			extension: 'jade'
+			potentialDeps: true
 
 		it 'should accept one regex', (done) ->
 			progenyConfig.exclusion = /excludedDependencyOne/
@@ -104,7 +120,9 @@ describe 'progeny configuration', ->
 
 	describe 'altPaths', ->
 		it 'should look for deps in altPaths', (done) ->
-			progenyConfig = altPaths: [getFixturePath 'subdir']
+			progenyConfig =
+				altPaths: [getFixturePath 'subdir']
+				potentialDeps: true
 			progeny(progenyConfig) getFixturePath('altExtensions.jade'), (err, dependencies) ->
 				paths = []
 				paths.push getFixturePath y + x for y in ['', 'subdir/'] for x in ['htmlPartial.html', 'htmlPartial.html.jade']

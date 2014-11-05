@@ -37,6 +37,7 @@ progenyConstructor = (mode, settings = {}) ->
 		extensionsList
 		multipass
 		potentialDeps
+		reverseArgs
 	} = settings
 	parseDeps = (path, source, depsList, callback) ->
 		parent = sysPath.dirname path if path
@@ -128,18 +129,11 @@ progenyConstructor = (mode, settings = {}) ->
 			callback = source
 			source = undefined
 
-		fileExt = sysPath.extname(path)[1..]
-		if path and source
-			altExt = sysPath.extname(source)
-			if not (0 < fileExt.length < 5) and 1 < altExt.length < 6
-				tempPath = source
-				source = path
-				path = tempPath
-				fileExt = altExt[1..]
+		[path, source] = [source, path] if reverseArgs
 
 		depsList = []
 
-		extension ?= fileExt
+		extension ?= sysPath.extname(path)[1..]
 		def = defaultSettings extension
 		regexp ?= def.regexp
 		prefix ?= def.prefix

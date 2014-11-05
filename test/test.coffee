@@ -47,11 +47,6 @@ describe 'progeny', ->
 			assert.deepEqual deps, []
 			do done
 
-	it 'should auto-correct reversed args', (done) ->
-		progeny(o) '@require bar\na=5px\n.test\n\tborder-radius a', 'foo.styl', (err, deps) ->
-			assert.deepEqual deps, ['bar.styl']
-			do done
-
 describe 'progeny.Sync', ->
 	it 'should return the result', ->
 		assert Array.isArray progeny.Sync() getFixturePath('altExtensions.jade')
@@ -127,5 +122,14 @@ describe 'progeny configuration', ->
 				paths = []
 				paths.push getFixturePath y + x for y in ['', 'subdir/'] for x in ['htmlPartial.html', 'htmlPartial.html.jade']
 				assert.deepEqual dependencies, paths
+				do done
+
+	describe 'reverseArgs', ->
+		it 'should allow path, source args to be switched', (done) ->
+			progenyConfig =
+				potentialDeps: true
+				reverseArgs: true
+			progeny(progenyConfig) '@require bar\na=5px\n.test\n\tborder-radius a', 'foo.styl', (err, deps) ->
+				assert.deepEqual deps, ['bar.styl']
 				do done
 

@@ -118,7 +118,7 @@ progenyConstructor = (mode, settings = {}) ->
 					depsList.push path if potentialDeps
 					fs[mode].readFile path, encoding: 'utf8', (err, source) ->
 						return callback() if err
-						depsList.push path unless potentialDeps
+						depsList.push path unless potentialDeps or path in depsList
 						parseDeps path, source, depsList, callback
 			, callback
 		else

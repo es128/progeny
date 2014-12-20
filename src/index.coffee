@@ -46,8 +46,10 @@ progenyConstructor = (mode, settings = {}) ->
 			.reduce (vals, regex) ->
 				vals
 					?.map (val) -> val.match regex
-					.reduce (flat, val) -> flat.concat val
+					.reduce (flat, val) ->
+						flat.concat val
 					, []
+					.filter (val) -> val
 			, [source]
 			?.map (val) -> (val.match multipass[multipass.length-1])[1]
 

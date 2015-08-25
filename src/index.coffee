@@ -3,6 +3,7 @@
 sysPath = require 'path'
 fs = require 'fs-mode'
 each = require 'async-each'
+glob = require 'glob'
 
 defaultSettings = (extname) ->
 	switch extname
@@ -73,7 +74,7 @@ progenyConstructor = (mode, settings = {}) ->
 						_exclusion is path
 					else false
 			.map (path) ->
-				if extension and '' is sysPath.extname path
+				if extension and not glob.hasMagic(path) and '' is sysPath.extname path
 					"#{path}.#{extension}"
 				else
 					path
@@ -90,7 +91,7 @@ progenyConstructor = (mode, settings = {}) ->
 
 		if extension
 			deps.forEach (path) ->
-				if ".#{extension}" isnt sysPath.extname path
+				unless ".#{extension}" is sysPath.extname(path) or glob.hasMagic path
 					deps.push "#{path}.#{extension}"
 
 		if prefix?
@@ -117,14 +118,32 @@ progenyConstructor = (mode, settings = {}) ->
 				if path in depsList
 					callback()
 				else
-					depsList.push path if potentialDeps
-					fs[mode].readFile path, encoding: 'utf8', (err, source) ->
-						return callback() if err
-						depsList.push path unless potentialDeps or path in depsList
-						parseDeps path, source, depsList, callback
+					if glob.hasMagic path
+						glob path, (err, files) ->
+							return callback() if err
+							each files, (path, callback) ->
+								depsList.push path if potentialDeps
+								addDep path, depsList, callback
+							, callback
+					else
+						depsList.push path if potentialDeps
+						ext = ".#{extension}"
+						modulePath = path.replace ext, "#{sysPath.sep}index#{ext}"
+						fs.exists modulePath, (exists) ->
+							if exists
+								depsList.splice(depsList.indexOf(path), 1, modulePath)
+								addDep modulePath, depsList, callback
+							else
+								addDep path, depsList, callback
 			, callback
 		else
 			callback()
+
+	addDep = (path, depsList, callback) ->
+		fs[mode].readFile path, encoding: 'utf8', (err, source) ->
+			return callback() if err
+			depsList.push path unless potentialDeps or path in depsList
+			parseDeps path, source, depsList, callback
 
 	progeny = (path, source, callback) ->
 		if typeof source is 'function'
@@ -165,4 +184,3 @@ progenyConstructor = (mode, settings = {}) ->
 
 module.exports = progenyConstructor.bind null, 'Async'
 module.exports.Sync = progenyConstructor.bind null, 'Sync'
-

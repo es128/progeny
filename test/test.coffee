@@ -21,6 +21,18 @@ describe 'progeny', ->
 			assert.deepEqual dependencies, paths
 			do done
 
+	it 'should resolve module imports', (done) ->
+		progeny(o) getFixturePath('module.styl'), (err, dependencies) ->
+			paths = [getFixturePath('base/index.styl')]
+			assert.deepEqual dependencies, paths
+			do done
+
+	it 'should resolve glob patterns', (done) ->
+		progeny(o) getFixturePath('globbing.styl'), (err, dependencies) ->
+			paths = (getFixturePath x for x in ['base/glob/styles1.styl', 'base/glob/styles2.styl'])
+			assert.deepEqual dependencies, paths
+			do done
+
 	it 'should provide only real files by default', (done) ->
 		progeny() getFixturePath('recursive.jade'), (err, dependencies) ->
 			paths = [getFixturePath('altExtensions.jade')]
@@ -132,4 +144,3 @@ describe 'progeny configuration', ->
 			progeny(progenyConfig) '@require bar\na=5px\n.test\n\tborder-radius a', 'foo.styl', (err, deps) ->
 				assert.deepEqual deps, ['bar.styl']
 				do done
-

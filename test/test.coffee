@@ -23,7 +23,7 @@ describe 'progeny', ->
 
 	it 'should resolve module imports', (done) ->
 		progeny(o) getFixturePath('module.styl'), (err, dependencies) ->
-			paths = [getFixturePath('base/index.styl')]
+			paths = [getFixturePath('base.styl'), getFixturePath('base/index.styl'), getFixturePath('foo.styl')]
 			assert.deepEqual dependencies, paths
 			do done
 
@@ -142,5 +142,5 @@ describe 'progeny configuration', ->
 				potentialDeps: true
 				reverseArgs: true
 			progeny(progenyConfig) '@require bar\na=5px\n.test\n\tborder-radius a', 'foo.styl', (err, deps) ->
-				assert.deepEqual deps, ['bar.styl']
+				assert.deepEqual deps, ['bar.styl', 'bar/index.styl']
 				do done

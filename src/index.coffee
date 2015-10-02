@@ -3,6 +3,7 @@
 sysPath = require 'path'
 fs = require 'fs-mode'
 each = require 'async-each'
+glob = require 'glob'
 
 defaultSettings = (extname) ->
 	switch extname
@@ -11,6 +12,8 @@ defaultSettings = (extname) ->
 		when 'styl'
 			regexp: /^\s*(?:@import|@require)\s*['"]?([^'"]+)['"]?/
 			exclusion: 'nib'
+			moduleDep: true
+			globDeps: true
 		when 'less'
 			regexp: /^\s*@import\s*(?:\(\w+\)\s*)?['"]([^'"]+)['"]/
 		when 'scss', 'sass'
@@ -37,6 +40,8 @@ progenyConstructor = (mode, settings = {}) ->
 		extensionsList
 		multipass
 		potentialDeps
+		moduleDep
+		globDeps
 		reverseArgs
 	} = settings
 	parseDeps = (path, source, depsList, callback) ->
@@ -73,7 +78,8 @@ progenyConstructor = (mode, settings = {}) ->
 						_exclusion is path
 					else false
 			.map (path) ->
-				if extension and '' is sysPath.extname path
+				allowExtendedImports = globDeps and glob.hasMagic(path) or moduleDep
+				if not allowExtendedImports and extension and '' is sysPath.extname path
 					"#{path}.#{extension}"
 				else
 					path
@@ -86,11 +92,16 @@ progenyConstructor = (mode, settings = {}) ->
 		deps = []
 		dirs.forEach (dir) ->
 			paths.forEach (path) ->
-				deps.push sysPath.join dir, path
+				if moduleDep and extension and '' is sysPath.extname path
+					deps.push sysPath.join dir, "#{path}.#{extension}"
+					deps.push sysPath.join dir, path, "index.#{extension}"
+				else
+					deps.push sysPath.join dir, path
 
 		if extension
 			deps.forEach (path) ->
-				if ".#{extension}" isnt sysPath.extname path
+				isGlob = globDeps and glob.hasMagic(path)
+				if not isGlob and ".#{extension}" isnt sysPath.extname(path)
 					deps.push "#{path}.#{extension}"
 
 		if prefix?
@@ -117,14 +128,24 @@ progenyConstructor = (mode, settings = {}) ->
 				if path in depsList
 					callback()
 				else
-					depsList.push path if potentialDeps
-					fs[mode].readFile path, encoding: 'utf8', (err, source) ->
-						return callback() if err
-						depsList.push path unless potentialDeps or path in depsList
-						parseDeps path, source, depsList, callback
+					if globDeps and glob.hasMagic path
+						glob path, (err, files) ->
+							return callback() if err
+							each files, (path, callback) ->
+								addDep path, depsList, callback
+							, callback
+					else
+						addDep path, depsList, callback
 			, callback
 		else
 			callback()
+
+	addDep = (path, depsList, callback) ->
+		depsList.push path if potentialDeps
+		fs[mode].readFile path, encoding: 'utf8', (err, source) ->
+			return callback() if err
+			depsList.push path unless potentialDeps or path in depsList
+			parseDeps path, source, depsList, callback
 
 	progeny = (path, source, callback) ->
 		if typeof source is 'function'
@@ -142,6 +163,8 @@ progenyConstructor = (mode, settings = {}) ->
 		exclusion ?= def.exclusion
 		extensionsList ?= def.extensionsList or []
 		multipass ?= def.multipass
+		moduleDep ?= def.moduleDep
+		globDeps ?= def.globDeps
 
 		run = ->
 			parseDeps path, source, depsList, ->
@@ -165,4 +188,3 @@ progenyConstructor = (mode, settings = {}) ->
 
 module.exports = progenyConstructor.bind null, 'Async'
 module.exports.Sync = progenyConstructor.bind null, 'Sync'
-

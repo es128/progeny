@@ -21,7 +21,8 @@
   },
   "dependencies": {
     "async-each": "~0.1.4",
-    "fs-mode": "^1.0.1"
+    "fs-mode": "^1.0.1",
+    "glob": "^5.0.14"
   },
   "devDependencies": {
     "mocha": "^1.21.5",

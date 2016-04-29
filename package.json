@@ -20,12 +20,12 @@
     "test": "rm -rf lib && coffee --bare --output lib/ src/ && mocha --compilers coffee:coffee-script/register"
   },
   "dependencies": {
-    "async-each": "~0.1.4",
+    "async-each": "^1.0.0",
     "fs-mode": "^1.0.1",
-    "glob": "^5.0.14"
+    "glob": "^7.0.3"
   },
   "devDependencies": {
-    "mocha": "^1.21.5",
+    "mocha": "^2.4.5",
     "coffee-script": "~1.8.0"
   }
 }

@@ -7,6 +7,7 @@
     "url": "http://github.com/es128"
   },
   "homepage": "https://github.com/es128/progeny",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/es128/progeny"

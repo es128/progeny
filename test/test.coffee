@@ -60,8 +60,14 @@ describe 'progeny', ->
 			do done
 
 describe 'progeny.Sync', ->
+	o = potentialDeps: true
 	it 'should return the result', ->
 		assert Array.isArray progeny.Sync() getFixturePath('altExtensions.jade')
+
+	it 'should resolve glob patterns', ->
+		dependencies = progeny.Sync(o) getFixturePath('globbing.styl')
+		paths = (getFixturePath x for x in ['base/glob/styles1.styl', 'base/glob/styles2.styl'])
+		assert.deepEqual dependencies, paths
 
 describe 'progeny configuration', ->
 	describe 'excluded file list', ->

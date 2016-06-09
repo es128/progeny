@@ -129,11 +129,18 @@ progenyConstructor = (mode, settings = {}) ->
 					callback()
 				else
 					if globDeps and glob.hasMagic path
-						glob path, (err, files) ->
-							return callback() if err
+						addDeps = (files) ->
 							each files, (path, callback) ->
 								addDep path, depsList, callback
 							, callback
+
+						if mode is 'Async'
+							glob path, (err, files) ->
+								return callback() if err
+								addDeps files
+						else
+							files = glob.sync path
+							addDeps files
 					else
 						addDep path, depsList, callback
 			, callback

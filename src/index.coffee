@@ -15,7 +15,7 @@ defaultSettings = (extname) ->
 			moduleDep: true
 			globDeps: true
 		when 'less'
-			regexp: /^\s*@import\s*(?:\(\w+\)\s*)?['"]([^'"]+)['"]/
+			regexp: /^\s*@import\s*(?:\(\w+\)\s*)?(?:(?:url\()?['"]([^'"]+)['"])/
 		when 'scss', 'sass'
 			regexp: /^\s*@import\s*['"]?([^'"]+)['"]?/
 			prefix: '_'

@@ -144,3 +144,31 @@ describe 'progeny configuration', ->
 			progeny(progenyConfig) '@require bar\na=5px\n.test\n\tborder-radius a', 'foo.styl', (err, deps) ->
 				assert.deepEqual deps, ['bar.styl', 'bar/index.styl']
 				do done
+
+	describe 'regexes', ->
+		describe 'Stylus', ->
+			it 'should get Stylus @import statements', (done) ->
+				progenyConfig =
+					potentialDeps: true
+				progeny(progenyConfig) getFixturePath('imports/foo.styl'), (err, deps) ->
+					assert.deepEqual deps, [getFixturePath('imports/bar.styl')]
+					do done
+		describe 'LESS', ->
+			it 'should get normal LESS import statements', (done) ->
+				progenyConfig =
+					potentialDeps: true
+				progeny(progenyConfig) getFixturePath('imports/foo.less'), (err, deps) ->
+					assert.deepEqual deps, [getFixturePath('imports/bar.less')]
+					do done
+			it 'should get LESS import statements with one or more options', (done) ->
+				progenyConfig =
+					potentialDeps: true
+				progeny(progenyConfig) getFixturePath('imports/foo-options.less'), (err, deps) ->
+					assert.deepEqual deps, [getFixturePath('imports/bar.less'), getFixturePath('imports/baz.less')]
+					do done
+			it 'should get LESS import statements with one or more options', (done) ->
+				progenyConfig =
+					potentialDeps: true
+				progeny(progenyConfig) getFixturePath('imports/foo-url.less'), (err, deps) ->
+					assert.deepEqual deps, [getFixturePath('imports/bar.less'), getFixturePath('imports/baz.less'), getFixturePath('imports/qux.less')]
+					do done

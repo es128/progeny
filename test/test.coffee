@@ -166,7 +166,7 @@ describe 'progeny configuration', ->
 				progeny(progenyConfig) getFixturePath('imports/foo-options.less'), (err, deps) ->
 					assert.deepEqual deps, [getFixturePath('imports/bar.less'), getFixturePath('imports/baz.less')]
 					do done
-			it 'should get LESS import statements with one or more options', (done) ->
+			it 'should get LESS imports with the url() function', (done) ->
 				progenyConfig =
 					potentialDeps: true
 				progeny(progenyConfig) getFixturePath('imports/foo-url.less'), (err, deps) ->

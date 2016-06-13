@@ -4,6 +4,7 @@ sysPath = require 'path'
 fs = require 'fs-mode'
 each = require 'async-each'
 glob = require 'glob'
+chalk = require 'chalk'
 
 defaultSettings = (extname) ->
 	switch extname
@@ -31,6 +32,11 @@ defaultSettings = (extname) ->
 		else
 			{}
 
+printDepsList = (path, depsList) ->
+	formatted = depsList.map((p) -> '    |--' + sysPath.relative('.', p)).join('\n')
+	console.log(chalk.green.bold('DEP') + ' ' + sysPath.relative('.', path))
+	console.log(formatted || '    |  NO-DEP')
+
 progenyConstructor = (mode, settings = {}) ->
 	{
 		rootPath
@@ -45,6 +51,7 @@ progenyConstructor = (mode, settings = {}) ->
 		moduleDep
 		globDeps
 		reverseArgs
+		debug
 	} = settings
 	parseDeps = (path, source, depsList, callback) ->
 		parent = sysPath.dirname path if path
@@ -174,9 +181,12 @@ progenyConstructor = (mode, settings = {}) ->
 		multipass ?= def.multipass
 		moduleDep ?= def.moduleDep
 		globDeps ?= def.globDeps
+		debug ?= def.debug or false
 
 		run = ->
 			parseDeps path, source, depsList, ->
+				if debug
+					printDepsList path, depsList
 				callback null, depsList
 		if source?
 			do run

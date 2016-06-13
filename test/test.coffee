@@ -1,6 +1,7 @@
 progeny = require '..'
 path = require 'path'
 assert = require 'assert'
+sinon = require 'sinon'
 
 getFixturePath = (subPath) ->
 	path.join __dirname, 'fixtures', subPath
@@ -178,3 +179,15 @@ describe 'progeny configuration', ->
 				progeny(progenyConfig) getFixturePath('imports/foo-url.less'), (err, deps) ->
 					assert.deepEqual deps, [getFixturePath('imports/bar.less'), getFixturePath('imports/baz.less'), getFixturePath('imports/qux.less')]
 					do done
+
+	describe 'Debug mode', ->
+		beforeEach ->
+			sinon.spy console, "log"
+
+		it 'should print dependencies list when debug is set to true', (done) ->
+			progeny(debug: true, potentialDeps: true) getFixturePath('imports/foo.less'), (err, deps) ->
+				assert console.log.callCount == 2
+				do done
+
+		afterEach ->
+			console.log.restore()

@@ -85,6 +85,9 @@ var progenyConfig = {
     // actually found in the file system. Use this option to get every possible
     // path progeny thinks a depencency could be located at.
     potentialDeps: true,
+
+    // Print dependency resolution information to console.log
+    debug: true
 };
 ```
 

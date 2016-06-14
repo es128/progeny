@@ -67,7 +67,10 @@ var progenyConfig = {
     rootPath: path.join('path', 'to', 'project'),
 
     // Other paths to check for possible dependency resolution
-    altPaths: [path.join('path', 'to', 'shared'), path.join('path', 'to', 'common')]
+    altPaths: [
+      path.join('path', 'to', 'shared'),
+      path.join('path', 'to', 'common')
+    ],
 
     // An array of regexps to run in series for more complex dependency parsing
     // Useful for matching multiple dependencies from one, possibly mult-line,
@@ -76,12 +79,12 @@ var progenyConfig = {
         /@import[^;]+;/g,
         /\s*['"][^'"]+['"]\s*,?/g,
         /(?:['"])([^'"]+)/
-    ]
+    ],
 
     // By default the list of paths progeny provides will be limited to files
     // actually found in the file system. Use this option to get every possible
     // path progeny thinks a depencency could be located at.
-    potentialDeps: true
+    potentialDeps: true,
 };
 ```
 

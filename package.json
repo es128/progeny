@@ -17,8 +17,8 @@
   },
   "main": "lib",
   "scripts": {
-    "prepublish": "rm -rf lib && coffee --bare --output lib/ src/",
-    "test": "rm -rf lib && coffee --bare --output lib/ src/ && mocha --compilers coffee:coffee-script/register"
+    "prepublish": "rm -rf lib && cp -r src lib",
+    "test": "rm -rf lib && cp -r src lib && mocha"
   },
   "dependencies": {
     "async-each": "^1.0.0",
@@ -27,7 +27,6 @@
     "glob": "^7.0.3"
   },
   "devDependencies": {
-    "coffee-script": "~1.8.0",
     "mocha": "^2.4.5",
     "sinon": "^1.17.4"
   }

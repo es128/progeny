@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 var sysPath = require('path');
 var fs = require('fs-mode');
@@ -7,43 +7,39 @@ var glob = require('glob');
 var chalk = require('chalk');
 
 function defaultSettings(extName) {
-  if (extName === 'jade') {
-    return {
-      regexp: /^\s*(?:include|extends)\s+(.+)/
-    };
-  }
-
-  if (extName === 'styl') {
-    return {
-      regexp: /^\s*(?:@import|@require)\s*['"]?([^'"]+)['"]?/,
-      exclusion: 'nib',
-      moduleDep: true,
-      globDeps: true
-    };
-  }
-
-  if (extName === 'less') {
-    return {
-      regexp: /^\s*@import\s*(?:\([\w, ]+\)\s*)?(?:(?:url\()?['"]?([^'")]+)['"]?)/
-    };
-  }
-
-  if (extName === 'scss' || extName === 'sass') {
-    return {
-      regexp: /^\s*@import\s*['"]?([^'"]+)['"]?/,
-      prefix: '_',
-      exclusion: /^compass/,
-      extensionsList: ['scss', 'sass'],
-      multipass: [
-        /@import[^;]+;/g,
-        /\s*['"][^'"]+['"]\s*,?/g,
-        /(?:['"])([^'"]+)/
-      ]
-    };
-  }
-
-  if (extName === 'css') {
-    return { regexp: /^\s*@import\s*(?:url\()?['"]([^'"]+)['"]/ };
+  switch (extName) {
+    case 'jade':
+      return {
+        regexp: /^\s*(?:include|extends)\s+(.+)/
+      };
+    case 'styl':
+      return {
+        regexp: /^\s*(?:@import|@require)\s*['"]?([^'"]+)['"]?/,
+        exclusion: 'nib',
+        moduleDep: true,
+        globDeps: true
+      };
+    case 'less':
+      return {
+        regexp: /^\s*@import\s*(?:\([\w, ]+\)\s*)?(?:(?:url\()?['"]?([^'")]+)['"]?)/
+      };
+    case 'sass':
+    case 'scss':
+      return {
+        regexp: /^\s*@import\s*['"]?([^'"]+)['"]?/,
+        prefix: '_',
+        exclusion: /^compass/,
+        extensionsList: ['scss', 'sass'],
+        multipass: [
+          /@import[^;]+;/g,
+          /\s*['"][^'"]+['"]\s*,?/g,
+          /(?:['"])([^'"]+)/
+        ]
+      };
+    case 'css':
+      return {
+        regexp: /^\s*@import\s*(?:url\()?['"]([^'"]+)['"]/
+      };
   }
 
   return {};
@@ -206,29 +202,29 @@ function progenyConstructor(mode, settings) {
       each(deps, function (path, callback) {
         if (depsList.indexOf(path) >= 0) {
           callback();
-        } else {
-          if (globDeps && glob.hasMagic(path)) {
-            var addDeps = function (files) {
-              each(files, function (path, callback) {
-                addDep(path, depsList, callback);
-              }, callback);
-            };
+          return;
+        }
+        if (globDeps && glob.hasMagic(path)) {
+          var addDeps = function (files) {
+            each(files, function (path, callback) {
+              addDep(path, depsList, callback);
+            }, callback);
+          };
 
-            if (mode === 'Async') {
-              glob(path, function (err, files) {
-                if (err) {
-                  return callback();
-                }
+          if (mode === 'Async') {
+            glob(path, function (err, files) {
+              if (err) {
+                return callback();
+              }
 
-                addDeps(files.sort());
-              });
-            } else {
-              var files = glob.sync(path);
-              addDeps(files.sort());
-            }
+              addDeps(files);
+            });
           } else {
-            addDep(path, depsList, callback);
+            var files = glob.sync(path);
+            addDeps(files);
           }
+        } else {
+          addDep(path, depsList, callback);
         }
       }, callback);
     } else {
@@ -237,20 +233,19 @@ function progenyConstructor(mode, settings) {
   }
 
   function addDep(path, depsList, callback) {
-    if (potentialDeps) {
+    if (depsList.indexOf(path) < 0) {
       depsList.push(path);
     }
 
     fs[mode].readFile(path, { encoding: 'utf8' }, function (err, source) {
       if (err) {
-        return callback();
+        if (!potentialDeps) {
+          depsList.splice(depsList.indexOf(path), 1);
+        }
+        callback();
+      } else {
+        parseDeps(path, source, depsList, callback);
       }
-
-      if (!(depsList.indexOf(path) >= 0 || potentialDeps)) {
-        depsList.push(path);
-      }
-
-      parseDeps(path, source, depsList, callback);
     });
   }
 

@@ -281,7 +281,7 @@ function progenyConstructor(mode, settings) {
 
     function run() {
       parseDeps(path, source, depsList, function () {
-        var sorted = depsList.sort();
+        var sorted = depsList.sort(); // Sort the deps.
         if (debug) {
           printDepsList(path, sorted);
         }

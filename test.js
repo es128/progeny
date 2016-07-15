@@ -201,8 +201,8 @@ describe('progeny configuration', function () {
       progeny(progenyConfig)(getFixturePath('altExtensions.jade'), function (err, dependencies) {
         var paths = [
           getFixturePath('htmlPartial.html'),
-          getFixturePath('htmlPartial.html.jade'),
           getFixturePath('subdir/htmlPartial.html'),
+          getFixturePath('htmlPartial.html.jade'),
           getFixturePath('subdir/htmlPartial.html.jade'),
         ];
         assert.deepEqual(dependencies, paths);

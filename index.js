@@ -260,7 +260,7 @@ function progenyConstructor(mode, settings) {
       source = undefined;
     }
 
-    if (source && 'path' in source) {
+    if (source && typeof source === 'object' && 'path' in source) {
       path = source.path;
       source = source.data;
     }

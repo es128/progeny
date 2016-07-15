@@ -281,10 +281,11 @@ function progenyConstructor(mode, settings) {
 
     function run() {
       parseDeps(path, source, depsList, function () {
+        var sorted = depsList.sort();
         if (debug) {
-          printDepsList(path, depsList);
+          printDepsList(path, sorted);
         }
-        callback(null, depsList);
+        callback(null, sorted);
       });
     }
 

@@ -15,10 +15,8 @@
   "bugs": {
     "url": "https://github.com/es128/progeny/issues"
   },
-  "main": "lib",
   "scripts": {
-    "prepublish": "rm -rf lib && cp -r src lib",
-    "test": "rm -rf lib && cp -r src lib && mocha"
+    "test": "mocha"
   },
   "dependencies": {
     "async-each": "^1.0.0",

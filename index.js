@@ -220,11 +220,11 @@ function progenyConstructor(mode, settings) {
                   return callback();
                 }
 
-                addDeps(files);
+                addDeps(files.sort());
               });
             } else {
               var files = glob.sync(path);
-              addDeps(files);
+              addDeps(files.sort());
             }
           } else {
             addDep(path, depsList, callback);
@@ -260,6 +260,11 @@ function progenyConstructor(mode, settings) {
       source = undefined;
     }
 
+    if (source && 'path' in source) {
+      path = source.path;
+      source = source.data;
+    }
+
     if (reverseArgs) {
       var temp = source;
       source = path;
@@ -281,11 +286,8 @@ function progenyConstructor(mode, settings) {
 
     function run() {
       parseDeps(path, source, depsList, function () {
-        var sorted = depsList.sort(); // Sort the deps.
-        if (debug) {
-          printDepsList(path, sorted);
-        }
-        callback(null, sorted);
+        if (debug) printDepsList(path, depsList);
+        callback(null, depsList);
       });
     }
 

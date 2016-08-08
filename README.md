@@ -16,6 +16,9 @@ source code if you already have it handy), and it will figure out all of that
 file's dependencies and sub-dependencies, passing an array of them to your
 callback. Or use the `Sync` API to get the results as a return value.
 
+Result array has non-enumerable `patterns` property with an array of
+glob patterns found in source files' `import` statements.
+
 Examples using `path` assume you already have `var path = require('path');`.
 You _could_ just use strings like `'/path/to/project'`, but you may run into
 cross-compatibility issues.
@@ -97,7 +100,7 @@ Process a list of files:
 ```javascript
 var progeny = require('progeny');
 var getDependencies = progeny(progenyConfig);
-myFiles.forEach( function (file) {
+myFiles.forEach(function (file) {
     getDependencies(file.path, file.source, function (err, deps) {
         if (err) throw new Error(err);
         file.dependencies = deps;

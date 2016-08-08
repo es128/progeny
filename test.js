@@ -1,3 +1,5 @@
+'use strict';
+
 var progeny = require('./index');
 var path = require('path');
 var assert = require('assert');
@@ -8,7 +10,7 @@ function getFixturePath(subPath) {
 }
 
 describe('progeny', function() {
-  var  o = { potentialDeps: true };
+  var o = { potentialDeps: true };
 
   it('should preserve original file extensions', function (done) {
     progeny(o)(getFixturePath('altExtensions.jade'), function (err, dependencies) {
@@ -17,7 +19,7 @@ describe('progeny', function() {
         getFixturePath('htmlPartial.html.jade')
       ];
       assert.deepEqual(dependencies, paths);
-      return done();
+      done();
     });
   });
 
@@ -29,7 +31,7 @@ describe('progeny', function() {
         getFixturePath('htmlPartial.html.jade')
       ];
       assert.deepEqual(dependencies, paths);
-      return done();
+      done();
     });
   });
 
@@ -41,7 +43,7 @@ describe('progeny', function() {
         getFixturePath('foo.styl')
       ];
       assert.deepEqual(dependencies, paths);
-      return done();
+      done();
     });
   });
 
@@ -49,9 +51,18 @@ describe('progeny', function() {
     progeny(o)(getFixturePath('globbing.styl'), function (err, dependencies) {
       var paths = [
         getFixturePath('base/glob/styles1.styl'),
-        getFixturePath('base/glob/styles2.styl')];
+        getFixturePath('base/glob/styles2.styl')
+      ];
+
       assert.deepEqual(dependencies, paths);
-      return done();
+      done();
+    });
+  });
+
+  it('should list found globs in .patterns', function (done) {
+    progeny(o)(getFixturePath('globbing.styl'), function (err, dependencies) {
+      assert.deepEqual(dependencies.patterns, [getFixturePath('base/glob/*')]);
+      done();
     });
   });
 
@@ -59,7 +70,7 @@ describe('progeny', function() {
     progeny()(getFixturePath('recursive.jade'), function (err, dependencies) {
       var paths = [getFixturePath('altExtensions.jade')];
       assert.deepEqual(dependencies, paths);
-      return done();
+      done();
     });
   });
 
@@ -68,7 +79,7 @@ describe('progeny', function() {
       // 6 non-excluded references in fixture
       // x4 for prefixed/unprefixed and both file extensions
       assert.equal(dependencies.length, 24);
-      return done();
+      done();
     });
   });
 
@@ -77,7 +88,7 @@ describe('progeny', function() {
     progeny(o)(getFixturePath('altExtensions.jade'), function (err, deps) {
       dependencies = deps;
       assert(Array.isArray, dependencies);
-      return done();
+      done();
     });
 
     assert.equal(dependencies, null);
@@ -86,7 +97,7 @@ describe('progeny', function() {
   it('should return empty array when there are no deps', function (done) {
     progeny(o)('foo.scss', '$a: 5px; .test {\n  border-radius: $a; }\n', function (err, deps) {
       assert.deepEqual(deps, []);
-      return done();
+      done();
     });
   });
 });
@@ -132,7 +143,7 @@ describe('progeny configuration', function () {
         ];
 
         assert.deepEqual(dependencies, paths);
-        return done();
+        done();
       });
     });
 
@@ -147,7 +158,7 @@ describe('progeny configuration', function () {
         ];
 
         assert.deepEqual(dependencies, paths);
-        return done();
+        done();
       });
     });
 
@@ -160,7 +171,7 @@ describe('progeny configuration', function () {
 
       getDependencies(getFixturePath('excludedDependencies.jade'), function (err, dependencies) {
         assert.deepEqual(dependencies, [getFixturePath('includedDependencyOne.jade')]);
-        return done();
+        done();
       });
     });
 
@@ -173,7 +184,7 @@ describe('progeny configuration', function () {
 
       getDependencies(getFixturePath('excludedDependencies.jade'), function (err, dependencies) {
         assert.deepEqual(dependencies, [getFixturePath('includedDependencyOne.jade')]);
-        return done();
+        done();
       });
     });
 
@@ -186,14 +197,14 @@ describe('progeny configuration', function () {
 
       getDependencies(getFixturePath('excludedDependencies.jade'), function (err, dependencies) {
         assert.deepEqual(dependencies, [getFixturePath('includedDependencyOne.jade')]);
-        return done();
+        done();
       });
     });
   });
 
   describe('altPaths', function () {
     it('should look for deps in altPaths', function (done) {
-      progenyConfig = {
+      var progenyConfig = {
         altPaths: [getFixturePath('subdir')],
         potentialDeps: true
       };
@@ -206,7 +217,7 @@ describe('progeny configuration', function () {
           getFixturePath('subdir/htmlPartial.html.jade'),
         ];
         assert.deepEqual(dependencies, paths);
-        return done();
+        done();
       });
     });
   });
@@ -220,7 +231,7 @@ describe('progeny configuration', function () {
 
       progeny(progenyConfig)('@require bar\na=5px\n.test\n\tborder-radius a', 'foo.styl', function (err, deps) {
         assert.deepEqual(deps, ['bar.styl', 'bar/index.styl']);
-        return done();
+        done();
       });
     });
   });
@@ -228,36 +239,40 @@ describe('progeny configuration', function () {
   describe('regexes', function () {
     describe('Stylus', function () {
       it('should get Stylus @import statements', function (done) {
-        progenyConfig = { potentialDeps: true };
+        var progenyConfig = { potentialDeps: true };
         progeny(progenyConfig)(getFixturePath('imports/foo.styl'), function (err, deps) {
           assert.deepEqual(deps, [getFixturePath('imports/bar.styl')]);
-          return done();
+          done();
         });
       });
     });
 
     describe('LESS', function () {
       it('should get normal LESS import statements', function (done) {
-        progenyConfig = { potentialDeps: true };
+        var progenyConfig = { potentialDeps: true };
         progeny(progenyConfig)(getFixturePath('imports/foo.less'), function (err, deps) {
           assert.deepEqual(deps, [getFixturePath('imports/bar.less')]);
-          return done();
+          done();
         });
       });
 
       it('should get LESS import statements with one or more options', function (done) {
-        progenyConfig = { potentialDeps: true };
+        var progenyConfig = { potentialDeps: true };
         progeny(progenyConfig)(getFixturePath('imports/foo-options.less'), function (err, deps) {
           assert.deepEqual(deps, [getFixturePath('imports/bar.less'), getFixturePath('imports/baz.less')]);
-          return done();
+          done();
         });
       });
 
       it('should get LESS imports with the url() function', function (done) {
-        progenyConfig = { potentialDeps: true };
+        var progenyConfig = { potentialDeps: true };
         progeny(progenyConfig)(getFixturePath('imports/foo-url.less'), function (err, deps) {
-          assert.deepEqual(deps, [getFixturePath('imports/bar.less'), getFixturePath('imports/baz.less'), getFixturePath('imports/qux.less')]);
-          return done();
+          assert.deepEqual(deps, [
+            getFixturePath('imports/bar.less'),
+            getFixturePath('imports/baz.less'),
+            getFixturePath('imports/qux.less')
+          ]);
+          done();
         });
       });
     });
@@ -265,13 +280,13 @@ describe('progeny configuration', function () {
 
   describe('Debug mode', function () {
     beforeEach(function () {
-      sinon.spy(console, "log");
+      sinon.spy(console, 'log');
     });
 
     it('should print dependencies list when debug is set to true', function (done) {
       progeny({ debug: true, potentialDeps: true })(getFixturePath('imports/foo.less'), function (err, deps) {
         assert(console.log.callCount === 2);
-        return done();
+        done();
       });
     });
 

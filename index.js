@@ -76,62 +76,47 @@ function progenyConstructor(mode, settings) {
       parent = sysPath.dirname(path);
     }
 
+    var globs = [];
     var mdeps = [];
     if (multipass) {
       mdeps = multipass.slice(0, -1)
         .reduce(function (vals, regex) {
           return vals.map(function (val) {
-						if (!val) {
-							return [];
-						}
-
-            return val.match(regex);
+            return val ? val.match(regex) : [];
           }).reduce(function (flat, val) {
             return flat.concat(val);
           }, []);
         }, [source])
         .map(function (val) {
-          return val.match(multipass[multipass.length - 1])[1];
+          var last = multipass[multipass.length - 1];
+          return val.match(last)[1];
         });
     }
 
     var paths = source.toString()
       .split('\n')
       .map(function (line) {
-        return line.match(regexp)
+        return line.match(regexp);
       })
       .filter(function (match) {
-        return match && match.length > 0;
+        return match && match.length;
       })
       .map(function (match) {
         return match[1];
       })
       .concat(mdeps)
       .filter(function (path) {
-        if (!Array.isArray(exclusion)) {
-          exclusion = [exclusion];
-        }
-
-        if (path) {
-          return !exclusion.some(function (ex) {
-            if (ex instanceof RegExp) {
-              return ex.test(path);
-            }
-
-            if (typeof ex === 'string') {
-              return ex === path;
-            }
-
-            return false;
-          });
-        }
-
-        return false;
+        return path && ![].concat(exclusion).some(function (ex) {
+          if (ex instanceof RegExp) return ex.test(path);
+          if (typeof ex === 'string') return ex === path;
+        });
       })
       .map(function (path) {
-        var allowExtendedImports = globDeps && glob.hasMagic(path) || moduleDep;
-        if (!allowExtendedImports && extension &&
-          sysPath.extname(path) === '') {
+        var isGlob = globDeps && glob.hasMagic(path);
+        if (isGlob) globs.push(path);
+
+        var allowExtendedImports = isGlob || moduleDep;
+        if (!allowExtendedImports && extension && !sysPath.extname(path)) {
           return path + '.' + extension;
         }
         return path;
@@ -147,13 +132,17 @@ function progenyConstructor(mode, settings) {
     }
 
     if (Array.isArray(altPaths)) {
-      dirs.push.apply(dirs, altPaths);
+      [].push.apply(dirs, altPaths);
     }
 
     var deps = [];
     dirs.forEach(function (dir) {
+      globs.forEach(function (glob) {
+        depsList.patterns.push(sysPath.join(dir, glob));
+      });
+
       paths.forEach(function (path) {
-        if (moduleDep && extension && sysPath.extname(path) === '') {
+        if (moduleDep && extension && !sysPath.extname(path)) {
           deps.push(sysPath.join(dir, path + '.' + extension));
           deps.push(sysPath.join(dir, path, 'index.' + extension));
         } else {
@@ -180,7 +169,7 @@ function progenyConstructor(mode, settings) {
           prefixed.push(sysPath.join(dir, prefix + file));
         }
       });
-      deps = deps.concat(prefixed);
+      [].push.apply(deps, prefixed);
     }
 
     if (extensionsList.length) {
@@ -195,7 +184,7 @@ function progenyConstructor(mode, settings) {
         });
       });
 
-      deps = deps.concat(altExts);
+      [].push.apply(deps, altExts);
     }
 
     if (deps.length) {
@@ -267,17 +256,22 @@ function progenyConstructor(mode, settings) {
     }
 
     var depsList = [];
+    Object.defineProperty(depsList, "patterns", {
+      value: [],
+      writable: true,
+      configurable: true,
+    });
 
     extension = extension || sysPath.extname(path).slice(1);
     var def = defaultSettings(extension);
-    regexp = regexp || def.regexp;
-    prefix = prefix || def.prefix;
-    exclusion = exclusion || def.exclusion;
-    extensionsList = extensionsList || def.extensionsList || [];
-    multipass = multipass || def.multipass;
-    moduleDep = moduleDep || def.moduleDep;
-    globDeps = globDeps || def.globDeps;
-    debug = debug || def.debug || false;
+    if (regexp == null) regexp = def.regexp;
+    if (prefix == null) prefix = def.prefix;
+    if (exclusion == null) exclusion = def.exclusion;
+    if (extensionsList == null) extensionsList = def.extensionsList || [];
+    if (multipass == null) multipass = def.multipass;
+    if (moduleDep == null) moduleDep = def.moduleDep;
+    if (globDeps == null) globDeps = def.globDeps;
+    if (debug == null) debug = def.debug;
 
     function run() {
       parseDeps(path, source, depsList, function () {

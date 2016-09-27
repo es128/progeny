@@ -89,6 +89,23 @@ var progenyConfig = {
     // path progeny thinks a depencency could be located at.
     potentialDeps: true,
 
+    // By default progeny will strip all line comments like "// ..." and
+    // multiline comments like "/* ... */". You could disable this behavior.
+    skipCommentes: true;
+
+    // Custom resolver allows to preprocess dependency name. For example, webpack
+    // has well known way to reference node_modules-related path with ~ in the
+    // beginning of import name.
+    // Return true, undefined or null to accept dependency without changes.
+    // Return false to reject dependency.
+    // Return new filename to override dependency.
+    resolver: function (depFilename, parentDir, parentFilename) {
+      if (depFilename.startsWith('~')) {
+        var absPath = path.resolve(path.join('.', 'node_modules', depFilename.substr(1)));
+        return path.relative(parentDir, absPath);
+      }
+    },
+
     // Print dependency resolution information to console.log
     debug: true
 };

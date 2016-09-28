@@ -149,14 +149,14 @@ function progenyConstructor(mode, settings) {
           var resolvedPath = resolver(filename, parent, path);
           if (resolvedPath === false) {
             return false;
-          } else if (resolvedPath === true
+          }
+          if (resolvedPath === true
             || resolvedPath === null
             || resolvedPath === undefined
           ) {
             return filename;
-          } else {
-            return resolvedPath;
           }
+          return resolvedPath;
         })
         .filter(function (path) {
           return path !== false;

@@ -294,4 +294,139 @@ describe('progeny configuration', function () {
       console.log.restore();
     });
   });
+
+  describe('skipComments', function () {
+    var progenyConfig = {
+      potentialDeps: true,
+      skipComments: true
+    };
+
+    it('should strip line comment without CRLF', function (done) {
+      var css = '@import "bar"; // @import "baz";';
+      progeny(progenyConfig)('main.less', css, function (err, deps) {
+        assert.deepEqual(deps, ['bar.less']);
+        done();
+      });
+    });
+
+    it('should strip line comment with CRLF', function (done) {
+      var css = ' // @import "baz"; \r\n @import "bar";';
+      progeny(progenyConfig)('main.less', css, function (err, deps) {
+        assert.deepEqual(deps, ['bar.less']);
+        done();
+      });
+    });
+
+    it('should strip line comment with CR', function (done) {
+      var css = ' // @import "baz"; \r @import "bar";';
+      progeny(progenyConfig)('main.less', css, function (err, deps) {
+        assert.deepEqual(deps, ['bar.less']);
+        done();
+      });
+    });
+
+    it('should strip line comment with LF', function (done) {
+      var css = ' // @import "baz"; \n @import "bar";';
+      progeny(progenyConfig)('main.less', css, function (err, deps) {
+        assert.deepEqual(deps, ['bar.less']);
+        done();
+      });
+    });
+
+    it('should strip block comment', function (done) {
+      var css = ' @import "t1"; /* @import "baz"; */ \n @import "t2";';
+      progeny(progenyConfig)('main.less', css, function (err, deps) {
+        assert.deepEqual(deps, ['t1.less', 't2.less']);
+        done();
+      });
+    });
+
+    it('should strip block multiline comment', function (done) {
+      var css = ' @import "t1"; /* @import "baz"; \n @import "bar"; */ \n @import "t2";';
+      progeny(progenyConfig)('main.less', css, function (err, deps) {
+        assert.deepEqual(deps, ['t1.less', 't2.less']);
+        done();
+      });
+    });
+
+    it('should be not greedy with multiline comments', function (done) {
+      var css = ' @import "t1"; /* @import "baz"; \n @import "bar"; */ \n @import "t2"; */';
+      progeny(progenyConfig)('main.less', css, function (err, deps) {
+        assert.deepEqual(deps, ['t1.less', 't2.less']);
+        done();
+      });
+    });
+  });
+
+  describe('resolver', function () {
+    it('should use custom import resolution', function (done) {
+      var css = '@import "~bar";';
+      progeny({
+        potentialDeps: true,
+        resolver: function (depFilename, parentDir, parentFilename) {
+          if (depFilename.startsWith('~')) {
+            var absPath = path.resolve(path.join('.', 'node_modules', depFilename.substr(1)));
+            return path.relative(parentDir, absPath);
+          }
+        },
+      })('main.less', css, function (err, deps) {
+        assert.deepEqual(deps, ['node_modules/bar.less']);
+        done();
+      });
+    });
+
+    it('should skip import', function (done) {
+      var css = '@import "~bar";';
+      progeny({
+        potentialDeps: true,
+        resolver: function (depFilename, parentDir, parentFilename) {
+          if (depFilename.startsWith('~')) {
+            return false;
+          }
+        },
+      })('main.less', css, function (err, deps) {
+        assert.deepEqual(deps, []);
+        done();
+      });
+    });
+
+    it('should not skip import if resolved as true', function (done) {
+      var css = '@import "bar";';
+      progeny({
+        potentialDeps: true,
+        resolver: function (depFilename, parentDir, parentFilename) {
+          return true;
+        },
+      })('main.less', css, function (err, deps) {
+        assert.deepEqual(deps, ['bar.less']);
+        done();
+      });
+    });
+
+    it('should not skip import if resolved as undefined', function (done) {
+      var css = '@import "bar";';
+      progeny({
+        potentialDeps: true,
+        resolver: function (depFilename, parentDir, parentFilename) {
+          return;
+        },
+      })('main.less', css, function (err, deps) {
+        assert.deepEqual(deps, ['bar.less']);
+        done();
+      });
+    });
+
+    it('should not skip import if resolved as null', function (done) {
+      var css = '@import "bar";';
+      progeny({
+        potentialDeps: true,
+        resolver: function (depFilename, parentDir, parentFilename) {
+          return null;
+        },
+      })('main.less', css, function (err, deps) {
+        assert.deepEqual(deps, ['bar.less']);
+        done();
+      });
+    });
+  });
 });

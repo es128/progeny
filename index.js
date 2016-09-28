@@ -80,7 +80,7 @@ function progenyConstructor(mode, settings) {
 
     if (skipComments) {
       source = source
-        .replace(/\/\/[^\r\n]*(\r\n|\r|\n|$)/g, '')
+        .replace(/\/\/[^\r\n]*(\r\n|\r|\n|$)/g, '$1')
         .replace(/\/\*[\s\S]*?\*\//g, '');
     }
 

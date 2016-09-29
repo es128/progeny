@@ -69,11 +69,19 @@ function progenyConstructor(mode, settings) {
   var globDeps = settings.globDeps;
   var reverseArgs = settings.reverseArgs;
   var debug = settings.debug;
+  var resolver = settings.resolver;
+  var skipComments = settings.skipComments;
 
   function parseDeps(path, source, depsList, callback) {
     var parent;
     if (path) {
       parent = sysPath.dirname(path);
+    }
+
+    if (skipComments) {
+      source = source
+        .replace(/\/\/[^\r\n]*(\r\n|\r|\n|$)/g, '$1')
+        .replace(/\/\*[\s\S]*?\*\//g, '');
     }
 
     var globs = [];
@@ -133,6 +141,26 @@ function progenyConstructor(mode, settings) {
 
     if (Array.isArray(altPaths)) {
       [].push.apply(dirs, altPaths);
+    }
+
+    if (resolver) {
+      paths = paths
+        .map(function (filename) {
+          var resolvedPath = resolver(filename, parent, path);
+          if (resolvedPath === false) {
+            return false;
+          }
+          if (resolvedPath === true
+            || resolvedPath === null
+            || resolvedPath === undefined
+          ) {
+            return filename;
+          }
+          return resolvedPath;
+        })
+        .filter(function (path) {
+          return path !== false;
+        });
     }
 
     var deps = [];
@@ -272,6 +300,8 @@ function progenyConstructor(mode, settings) {
     if (moduleDep == null) moduleDep = def.moduleDep;
     if (globDeps == null) globDeps = def.globDeps;
     if (debug == null) debug = def.debug;
+    if (resolver == null) resolver = def.resolver;
+    if (skipComments == null) skipComments = true;
 
     function run() {
       parseDeps(path, source, depsList, function () {

@@ -91,7 +91,7 @@ var progenyConfig = {
 
     // By default progeny will strip all line comments like "// ..." and
     // multiline comments like "/* ... */". You could disable this behavior.
-    skipCommentes: true;
+    skipComments: true;
 
     // Custom resolver allows to preprocess dependency name. For example, webpack
     // has well known way to reference node_modules-related path with ~ in the

@@ -38,7 +38,8 @@ function defaultSettings(extName) {
       };
     case 'css':
       return {
-        regexp: /^\s*@import\s*(?:url\()?['"]([^'"]+)['"]/
+        regexp: /^\s*@import\s*(?:url\()?['"]([^'"]+)['"]/,
+        globDeps: true
       };
   }
 

@@ -43,7 +43,7 @@ var dependencies = progeny()(filePath);
 ##### Configuration
 There are
 [built-in configurations](https://github.com/es128/progeny/blob/master/index.js#L11-L42)
-already for `jade`, `stylus`, `less`, `sass`/`scss`, and `css`. Configuration
+already for `jade`, `slm`, `stylus`, `less`, `sass`/`scss`, and `css`. Configuration
 must be specified for any other formats. Feel free to submit Pull Requests to
 add default types, or improve the settings for the exisiting ones.
 

@@ -122,15 +122,19 @@ describe('progeny.Sync', function () {
 
 describe('progeny configuration', function () {
   describe('excluded file list', function () {
-    var progenyConfig = {
-      rootPath: path.join(__dirname, 'fixtures'),
-      exclusion: [
-        /excludedDependencyOne/,
-        /excludedDependencyTwo/
-      ],
-      extension: 'jade',
-      potentialDeps: true
-    };
+    var progenyConfig;
+
+    beforeEach(function () {
+      progenyConfig = {
+        rootPath: path.join(__dirname, 'fixtures'),
+        exclusion: [
+          /excludedDependencyOne/,
+          /excludedDependencyTwo/
+        ],
+        extension: 'jade',
+        potentialDeps: true
+      };
+    });
 
     it('should accept one regex', function (done) {
       progenyConfig.exclusion = /excludedDependencyOne/;

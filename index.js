@@ -12,6 +12,10 @@ function defaultSettings(extName) {
       return {
         regexp: /^\s*(?:include|extends)\s+(.+)/
       };
+    case 'slm':
+      return {
+        regexp: /^\s*(?:=\s+include|=\s+content|=\s+partial)\s+(.+)/
+      };
     case 'styl':
       return {
         regexp: /^\s*(?:@import|@require)\s*['"]?([^'"]+)['"]?/,

@@ -29,7 +29,7 @@ the source from the file itself and apply a built-in configuration based on the 
 
 ```javascript
 var progeny = require('progeny');
-var filePath = path.join('path', 'to', 'project', 'style-or-template.jade');
+var filePath = path.join('path', 'to', 'project', 'style-or-template.pug');
 
 // Async
 progeny()(filePath, function (err, dependencies) {
@@ -43,9 +43,9 @@ var dependencies = progeny()(filePath);
 ##### Configuration
 There are
 [built-in configurations](https://github.com/es128/progeny/blob/master/index.js#L11-L42)
-already for `jade`, `slm`, `stylus`, `less`, `sass`/`scss`, and `css`. Configuration
-must be specified for any other formats. Feel free to submit Pull Requests to
-add default types, or improve the settings for the exisiting ones.
+already for `css`, `sass`/`scss`, `less`, `stylus`, `pug`/`jade`, and `slm`.
+Configuration must be specified for any other formats. Feel free to submit Pull
+Requests to add default types, or improve the settings for the existing ones.
 
 ```javascript
 var progenyConfig = {
@@ -142,7 +142,7 @@ var mySourceString; // assume this contains valid source code
 progeny({
     // extension and rootPath must be specified for this to work
     // also need regexp if extension not one of the predefined ones
-    extension: 'jade',
+    extension: 'less',
     rootPath: path.join('path', 'to', 'project')
 })(null, mySourceString, function (err, deps) {});
 ```

@@ -8,6 +8,7 @@ var chalk = require('chalk');
 
 function defaultSettings(extName) {
   switch (extName) {
+    case 'pug':
     case 'jade':
       return {
         regexp: /^\s*(?:include|extends)\s+(.+)/

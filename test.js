@@ -100,6 +100,13 @@ describe('progeny', function() {
       done();
     });
   });
+
+  it('should skip empty dependencies', function (done) {
+    progeny(o)('foo.scss', '@import ""', function (err, deps) {
+      assert.deepEqual(deps, []);
+      done();
+    });
+  });
 });
 
 describe('progeny.Sync', function () {
@@ -431,6 +438,33 @@ describe('progeny configuration', function () {
         assert.deepEqual(deps, ['bar.less']);
         done();
       });
+    });
+  });
+
+  describe('multipass', function () {
+    var regexps = [
+      /(?:'[^']+\.twig')|(?:"[^"]+\.twig")/g,
+      /^.(.+).$/
+    ];
+
+    it('should resolve multiple dependencies in one line', function (done) {
+        progeny({
+          potentialDeps: true,
+          multipass: regexps
+        })('base.twig', '{% include ["partial1.twig", "partial2.twig"] %}', function (err, deps) {
+          assert.deepEqual(deps, ['partial1.twig', 'partial2.twig']);
+          done();
+        });
+    });
+
+    it('should return empty array when there are no dependencies', function (done) {
+        progeny({
+          potentialDeps: true,
+          multipass: regexps
+        })('base.twig', '{# No dependency here! #}', function (err, deps) {
+          assert.deepEqual(deps, []);
+          done();
+        });
     });
   });
 });

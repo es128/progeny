@@ -96,7 +96,7 @@ function progenyConstructor(mode, settings) {
       mdeps = multipass.slice(0, -1)
         .reduce(function (vals, regex) {
           return vals.map(function (val) {
-            return val ? val.match(regex) : [];
+            return val ? (val.match(regex) || []) : [];
           }).reduce(function (flat, val) {
             return flat.concat(val);
           }, []);
@@ -113,10 +113,10 @@ function progenyConstructor(mode, settings) {
         return line.match(regexp);
       })
       .filter(function (match) {
-        return match && match.length;
+        return match && (match.length > 1);
       })
       .map(function (match) {
-        return match[1];
+        return match[1].trim();
       })
       .concat(mdeps)
       .filter(function (path) {

@@ -258,6 +258,19 @@ describe('progeny configuration', function () {
       });
     });
 
+    describe('Protobuf', function () {
+      it('should get proto import statements', function (done) {
+        var progenyConfig = { potentialDeps: true };
+        progeny(progenyConfig)(getFixturePath('imports/foo.proto'), function (err, deps) {
+          assert.deepEqual(deps, [
+            getFixturePath('imports/bar.proto'),
+            getFixturePath('imports/baz.proto'),
+          ]);
+          done();
+        });
+      });
+    });
+
     describe('LESS', function () {
       it('should get normal LESS import statements', function (done) {
         var progenyConfig = { potentialDeps: true };

@@ -1,0 +1,2 @@
+import "bar.proto";
+import public "baz.proto";

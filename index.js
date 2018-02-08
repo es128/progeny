@@ -17,6 +17,10 @@ function defaultSettings(extName) {
       return {
         regexp: /^\s*(?:=\s+include|=\s+content|=\s+partial)\s+(.+)/
       };
+    case 'proto':
+      return {
+        regexp: /^\s*import\s+(?:public\s+)?"(.+)";/
+      };
     case 'styl':
       return {
         regexp: /^\s*(?:@import|@require)\s*['"]?([^'"]+)['"]?/,
